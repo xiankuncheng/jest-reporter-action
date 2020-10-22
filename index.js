@@ -52,9 +52,16 @@ const main = async () => {
   commentId = response && response.data && response.data.id;
 
   const codeCoverage = execSync(testCommand).toString();
-  const commentBody = `## Code Coverage Summary
-\`\`\`${codeCoverage}\`\`\`
-`;
+  let coveragePercentage = execSync(
+    "npx coverage-percentage ./coverage/lcov.info --lcov"
+  ).toString();
+  coveragePercentage = parseFloat(coveragePercentage).toFixed(2);
+  const commentBody = `<p>Total Coverage: <code>${coveragePercentage}</code></p>
+  <details><summary>Coverage report</summary>
+<p>
+<pre>${codeCoverage}</pre>
+</p>
+</details>`;
 
   await updateOrCreateComment(githubClient, commentId, commentBody);
 };
