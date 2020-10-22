@@ -33,7 +33,7 @@ const main = async () => {
   const prNumber = context.issue.number;
   const githubClient = new GitHub(githubToken);
 
-  const runningCommentBody = `## Code Coverage Summary`;
+  const commentTitle = `<p>Total Coverage: <code>`;
 
   const issueResponse = await githubClient.issues.listComments({
     issue_number: prNumber,
@@ -42,21 +42,17 @@ const main = async () => {
   });
 
   const existingComment = issueResponse.data.find(function (comment) {
-    return comment.user.type === 'Bot' && comment.body.indexOf('<p>Total Coverage: <code>') === 0;
+    return comment.user.type === 'Bot' && comment.body.indexOf(commentTitle) === 0;
   });
 
-  let commentId = existingComment && existingComment.id;
-
-  const response = await updateOrCreateComment(githubClient, commentId, runningCommentBody);
-
-  commentId = response && response.data && response.data.id;
+  const commentId = existingComment && existingComment.id;
 
   const codeCoverage = execSync(testCommand).toString();
   let coveragePercentage = execSync(
     "npx coverage-percentage ./coverage/lcov.info --lcov"
   ).toString();
   coveragePercentage = parseFloat(coveragePercentage).toFixed(2);
-  const commentBody = `<p>Total Coverage: <code>${coveragePercentage}</code></p>
+  const commentBody = `${commentTitle}${coveragePercentage}</code></p>
   <details><summary>Coverage report</summary>
 <p>
 <pre>${codeCoverage}</pre>
