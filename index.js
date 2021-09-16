@@ -52,12 +52,7 @@ const main = async () => {
     "npx coverage-percentage ./coverage/lcov.info --lcov"
   ).toString();
   coveragePercentage = parseFloat(coveragePercentage).toFixed(2);
-  const commentBody = `${commentTitle}${coveragePercentage}</code></p>
-  <details><summary>Coverage report</summary>
-<p>
-<pre>${codeCoverage}</pre>
-</p>
-</details>`;
+  const commentBody = `${commentTitle}${coveragePercentage}</code></p>`;
 
   await updateOrCreateComment(githubClient, commentId, commentBody);
 };
