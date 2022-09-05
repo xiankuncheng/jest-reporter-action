@@ -11,6 +11,9 @@ inputs:
   test-command:
     description: "Specify a command to run the tests"
     required: false
+  max-buffer:
+    description: "Max buffer to run the tests"
+    required: false
 runs:
   using: "node12"
   main: "index.js"
