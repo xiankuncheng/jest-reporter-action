@@ -30,6 +30,7 @@ const main = async () => {
   const repoOwner = context.repo.owner;
   const githubToken = core.getInput('github-token');
   const testCommand = core.getInput('test-command') || 'npx jest';
+  const maxBuffer = core.getInput("max-buffer") || 1024 * 1024;
   const prNumber = context.issue.number;
   const githubClient = new GitHub(githubToken);
 
@@ -47,9 +48,11 @@ const main = async () => {
 
   const commentId = existingComment && existingComment.id;
 
-  const codeCoverage = execSync(testCommand).toString();
+  const execOptions = { maxBuffer };
+  const codeCoverage = execSync(testCommand, execOptions).toString();
   let coveragePercentage = execSync(
-    "npx coverage-percentage ./coverage/lcov.info --lcov"
+    "npx coverage-percentage ./coverage/lcov.info --lcov",
+    execOptions
   ).toString();
   coveragePercentage = parseFloat(coveragePercentage).toFixed(2);
   const commentBody = `${commentTitle}${coveragePercentage}</code></p>`;
